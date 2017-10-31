@@ -4,7 +4,7 @@
 #include <string.h>
 #include <fstream>
 #include <utility>
-#include<conio.h>
+#include <curses.h>
 using namespace std;
 
 char PAREDE = '#';
@@ -22,12 +22,13 @@ pair <int, int> posicaoJogador;
 int itensColetados = 0;
 
 void imprimeLabirinto() {
-    cout << string(50, '\n');
+    cout << string(40, '\n');
+    cout << "\r";
     for(int i = 0; i < sizeof labirinto[0]; i++) {
         for(int j = 0; j < sizeof labirinto[0]; j++) {
             cout << labirinto[i][j];
         }
-        cout << endl;
+        cout << "\r" << endl;
     }
 }
 
@@ -111,6 +112,8 @@ void moveJogador(int direcao) {
 
 
 int main() {
+    initscr();
+    keypad(stdscr, TRUE);
     char key;
     int asciiValue;
     char ch;
@@ -139,7 +142,7 @@ int main() {
     inFile.close();
 
     imprimeLabirinto();
-
+    
     while(1)
     {
         key = getch();
@@ -147,19 +150,23 @@ int main() {
 
         if (asciiValue == 27)
             break;
-
-        if (asciiValue == 75) {
+        
+        if (asciiValue == 75 || asciiValue == 4) {
             moveJogador(ESQUERDA);
-        } else if (asciiValue == 77) {
+        } else if (asciiValue == 77 || asciiValue == 5) {
             moveJogador(DIREITA);
-        }  else if (asciiValue == 72) {
+        }  else if (asciiValue == 72 || asciiValue == 3) {
             moveJogador(BAIXO);
-        }  else if (asciiValue == 80) {
+        }  else if (asciiValue == 80 || asciiValue == 2) {
             moveJogador(CIMA);
         }
+        
         imprimeLabirinto();
-        cout << endl << "Itens coletados: " << itensColetados << endl;
+        cout << endl;
+        cout << "\rItens coletados: " << itensColetados << endl;
     }
+    
+    endwin();
 
     return 0;
 }

@@ -1,0 +1,2 @@
+Para compilar: g++ labirinto.cpp -lcurses -o labirinto
+Para executar: ./labirinto
