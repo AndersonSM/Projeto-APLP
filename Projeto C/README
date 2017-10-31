@@ -1,2 +1,6 @@
+INSTRUÇÕES:
+Antes de compilar: sudo apt-get install libncurses5-dev
 Para compilar: g++ labirinto.cpp -lcurses -o labirinto
 Para executar: ./labirinto
+
+Para jogar: Use as setas do teclado para mover / ESC para sair
