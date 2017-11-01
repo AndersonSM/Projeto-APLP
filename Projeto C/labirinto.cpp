@@ -5,6 +5,7 @@
 #include <fstream>
 #include <utility>
 #include <curses.h>
+#include <stdlib.h>
 using namespace std;
 
 char PAREDE = '#';
@@ -121,8 +122,8 @@ int main() {
 
     inFile.open("test.txt");
     if (!inFile) {
-        cout << "Unable to open file";
-        exit(1); // terminate with error
+        cout << "Unable to open file - ";
+        abort(); // terminate with error
     }
 
     // read chars from file
