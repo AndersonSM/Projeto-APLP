@@ -21,10 +21,10 @@ int DIREITA = 2;
 int CIMA = 3;
 int BAIXO = 4;
 
-int LINHAS_LABIRINTO = 23;
-int COLUNAS_LABIRINTO = 20;
+int LINHAS_LABIRINTO = 20;
+int COLUNAS_LABIRINTO = 70;
 
-char labirinto[23][20]; // numero de linhas e colunas temporarias (apenas para teste)
+char labirinto[23][70]; // numero de linhas e colunas temporarias (apenas para teste)
 pair <int, int> posicaoJogador;
 int itensColetados = 0;
 
@@ -41,8 +41,8 @@ void limpaTela(){
 void imprimeLabirinto() {
     limpaTela();
 
-    for(int i = 0; i < sizeof labirinto[0]; i++) {
-        for(int j = 0; j < sizeof labirinto[0]; j++) {
+    for(int i = 0; i < LINHAS_LABIRINTO; i++) {
+        for(int j = 0; j < COLUNAS_LABIRINTO; j++) {
             cout << labirinto[i][j];
         }
         cout << "\r" << endl;
@@ -178,6 +178,7 @@ int main() {
     imprimeLabirinto();
 
     printw("\nAperte alguma tecla para começar...");
+
     key = getch();
     asciiValue = ASCII_VALUE_BEGIN; // valor arbitrario apenas para ser usado dentro do loop
 
