@@ -6,25 +6,39 @@
 #include <utility>
 #include <curses.h>
 #include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 char PAREDE = '#';
 char ITEM = '*';
 char JOGADOR = '@';
 char ESPACO = ' ';
+char ASCIIVALUEBEGIN = 'N';
 
 int ESQUERDA = 1;
 int DIREITA = 2;
 int CIMA = 3;
 int BAIXO = 4;
 
+struct timespec t = { 3.5/*seconds*/, 0/*nanoseconds*/}; // tempo da tela de instrodução
+
 char labirinto[10][10];
 pair <int, int> posicaoJogador;
 int itensColetados = 0;
 
+void clrscr(){
+    #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+        system("clear");
+    #endif
+
+    #if defined(_WIN32) || defined(_WIN64)
+        system("cls");
+    #endif
+}
+
 void imprimeLabirinto() {
-    cout << string(40, '\n');
-    cout << "\r";
+    clrscr(); // screen cleaning
+
     for(int i = 0; i < sizeof labirinto[0]; i++) {
         for(int j = 0; j < sizeof labirinto[0]; j++) {
             cout << labirinto[i][j];
@@ -110,7 +124,20 @@ void moveJogador(int direcao) {
             break;
     }
 }
+void telaIntroducao() {
 
+    printf("\n00---------_000000_---00000000---00---00000000---00---00_____00---00000000---_000000_\n\r");
+    printf("00---------00000000---00000000---__---00000000---__---000____00---00000000---00000000\n\r");
+    printf("00---------00____00---00____0----00---00____00---00---0000___00------00------00____00\n\r");
+    printf("00---------00000000---000000-----00---00000000---00---00_00__00------00------00____00\n\r");
+    printf("00---------00000000---000000-----00---0000000----00---00__00_00------00------00____00\n\r");
+    printf("00---------00____00---00____0----00---00_00------00---00___0000------00------00____00\n\r");
+    printf("00000000---00____00---00000000---00---00___00----00---00____000------00------00000000\n\r");
+    printf("00000000---00____00---00000000---00---00____00---00---00_____00------00------_000000_\n\r");
+    printf("\nCarregando...\n");
+    nanosleep(&t,NULL);
+
+}
 
 int main() {
     initscr();
@@ -125,6 +152,8 @@ int main() {
         cout << "Unable to open file - ";
         abort(); // terminate with error
     }
+
+    telaIntroducao();
 
     // read chars from file
     int i = 0;
@@ -143,15 +172,16 @@ int main() {
     inFile.close();
 
     imprimeLabirinto();
-    
-    while(1)
-    {
-        key = getch();
-        asciiValue = key;
+
+    printw("\nAperte alguma tecla para começar...\n");
+    key = getch();
+    asciiValue = ASCIIVALUEBEGIN; // valor arbitrario apenas para ser usado dentro do loop
+
+    while(1) {
 
         if (asciiValue == 27)
             break;
-        
+
         if (asciiValue == 75 || asciiValue == 4) {
             moveJogador(ESQUERDA);
         } else if (asciiValue == 77 || asciiValue == 5) {
@@ -161,12 +191,15 @@ int main() {
         }  else if (asciiValue == 80 || asciiValue == 2) {
             moveJogador(CIMA);
         }
-        
+
         imprimeLabirinto();
         cout << endl;
         cout << "\rItens coletados: " << itensColetados << endl;
+
+        key = getch();
+        asciiValue = key;
     }
-    
+
     endwin();
 
     return 0;
