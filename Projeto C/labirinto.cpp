@@ -6,27 +6,29 @@
 #include <utility>
 #include <curses.h>
 #include <stdlib.h>
-#include <time.h>
+#include <unistd.h>
+
 using namespace std;
 
 char PAREDE = '#';
 char ITEM = '*';
 char JOGADOR = '@';
 char ESPACO = ' ';
-char ASCIIVALUEBEGIN = 'N';
+char ASCII_VALUE_BEGIN = 'N';
 
 int ESQUERDA = 1;
 int DIREITA = 2;
 int CIMA = 3;
 int BAIXO = 4;
 
-struct timespec t = { 3.5/*seconds*/, 0/*nanoseconds*/}; // tempo da tela de instrodução
+int LINHAS_LABIRINTO = 23;
+int COLUNAS_LABIRINTO = 20;
 
-char labirinto[10][10];
+char labirinto[23][20]; // numero de linhas e colunas temporarias (apenas para teste)
 pair <int, int> posicaoJogador;
 int itensColetados = 0;
 
-void clrscr(){
+void limpaTela(){
     #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
         system("clear");
     #endif
@@ -37,7 +39,7 @@ void clrscr(){
 }
 
 void imprimeLabirinto() {
-    clrscr(); // screen cleaning
+    limpaTela();
 
     for(int i = 0; i < sizeof labirinto[0]; i++) {
         for(int j = 0; j < sizeof labirinto[0]; j++) {
@@ -49,7 +51,7 @@ void imprimeLabirinto() {
 
 bool verificaLimite(pair <int, int> coord) {
 
-    return coord.first < 10 && coord.first >= 0 && coord.second < 10 && coord.second >= 0;
+    return coord.first < LINHAS_LABIRINTO && coord.first >= 0 && coord.second < COLUNAS_LABIRINTO && coord.second >= 0;
 }
 
 bool verificaParede(pair <int, int> coord) {
@@ -124,18 +126,19 @@ void moveJogador(int direcao) {
             break;
     }
 }
+
 void telaIntroducao() {
 
-    printf("\n00---------_000000_---00000000---00---00000000---00---00_____00---00000000---_000000_\n\r");
-    printf("00---------00000000---00000000---__---00000000---__---000____00---00000000---00000000\n\r");
-    printf("00---------00____00---00____0----00---00____00---00---0000___00------00------00____00\n\r");
-    printf("00---------00000000---000000-----00---00000000---00---00_00__00------00------00____00\n\r");
-    printf("00---------00000000---000000-----00---0000000----00---00__00_00------00------00____00\n\r");
-    printf("00---------00____00---00____0----00---00_00------00---00___0000------00------00____00\n\r");
-    printf("00000000---00____00---00000000---00---00___00----00---00____000------00------00000000\n\r");
-    printf("00000000---00____00---00000000---00---00____00---00---00_____00------00------_000000_\n\r");
-    printf("\nCarregando...\n");
-    nanosleep(&t,NULL);
+    cout << "\n00---------_000000_---00000000---00---00000000---00---00_____00---00000000---_000000_\n\r";
+    cout << "00---------00000000---00000000---__---00000000---__---000____00---00000000---00000000\n\r";
+    cout << "00---------00____00---00____0----00---00____00---00---0000___00------00------00____00\n\r";
+    cout << "00---------00000000---000000-----00---00000000---00---00_00__00------00------00____00\n\r";
+    cout << "00---------00000000---000000-----00---0000000----00---00__00_00------00------00____00\n\r";
+    cout << "00---------00____00---00____0----00---00_00------00---00___0000------00------00____00\n\r";
+    cout << "00000000---00____00---00000000---00---00___00----00---00____000------00------00000000\n\r";
+    cout << "00000000---00____00---00000000---00---00____00---00---00_____00------00------_000000_\n\r";
+    cout << "\nCarregando...\n";
+    sleep(3.5); // tempo da tela de instrodução
 
 }
 
@@ -147,12 +150,13 @@ int main() {
     char ch;
     ifstream inFile;
 
-    inFile.open("test.txt");
+    inFile.open("test2.txt"); // novo labirinto test2
     if (!inFile) {
         cout << "Unable to open file - ";
         abort(); // terminate with error
     }
 
+    cout<<"\e[8;25;100t"; // redimencionar o terminal
     telaIntroducao();
 
     // read chars from file
@@ -173,9 +177,9 @@ int main() {
 
     imprimeLabirinto();
 
-    printw("\nAperte alguma tecla para começar...\n");
+    printw("\nAperte alguma tecla para começar...");
     key = getch();
-    asciiValue = ASCIIVALUEBEGIN; // valor arbitrario apenas para ser usado dentro do loop
+    asciiValue = ASCII_VALUE_BEGIN; // valor arbitrario apenas para ser usado dentro do loop
 
     while(1) {
 
