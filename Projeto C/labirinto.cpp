@@ -78,7 +78,7 @@ void carregaFase(int fase) {
     char ch;
     ifstream inFile;
 
-    itensRestantes = 1;
+    itensRestantes = 0;
     itensColetados = 0;
 
     string nomeArquivo = "fase" + to_string(fase) + ".txt";
@@ -219,7 +219,7 @@ int main() {
         // verifica os itens pegos para passar de fase
         if (itensRestantes == 0) {
             faseAtual += 1;
-            if (faseAtual == 3) {
+            if (faseAtual == 5) {
                 break;
             }
             carregaFase(faseAtual);
