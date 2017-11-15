@@ -24,8 +24,10 @@ int BAIXO = 4;
 int LINHAS_LABIRINTO = 20;
 int COLUNAS_LABIRINTO = 70;
 
-char labirinto[23][70]; // numero de linhas e colunas temporarias (apenas para teste)
+char labirinto[20][70];
+int faseAtual = 1;
 pair <int, int> posicaoJogador;
+int itensRestantes = 0;
 int itensColetados = 0;
 
 void limpaTela(){
@@ -49,115 +51,42 @@ void imprimeLabirinto() {
     }
 }
 
-bool verificaLimite(pair <int, int> coord) {
-
-    return coord.first < LINHAS_LABIRINTO && coord.first >= 0 && coord.second < COLUNAS_LABIRINTO && coord.second >= 0;
-}
-
-bool verificaParede(pair <int, int> coord) {
-    return labirinto[coord.first][coord.second] == PAREDE;
-}
-
-bool verificaItem(pair <int, int> coord) {
-    return labirinto[coord.first][coord.second] == ITEM;
-}
-
-void moveJogador(int direcao) {
-    pair <int, int> novaPosicao;
-    switch(direcao) {
-        case 1 : // ESQUERDA
-            novaPosicao = make_pair(posicaoJogador.first, posicaoJogador.second - 1);
-            if (verificaLimite(novaPosicao)) {
-                if (!verificaParede(novaPosicao)) {
-                    if (verificaItem(novaPosicao)) {
-                        itensColetados++;
-                    }
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
-                    posicaoJogador = novaPosicao;
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
-
-                }
-            }
-            break;
-
-        case 2 : // DIREITA
-            novaPosicao = make_pair(posicaoJogador.first, posicaoJogador.second + 1);
-            if (verificaLimite(novaPosicao)) {
-                if (!verificaParede(novaPosicao)) {
-                    if (verificaItem(novaPosicao)) {
-                        itensColetados++;
-                    }
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
-                    posicaoJogador = novaPosicao;
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
-
-                }
-            }
-            break;
-
-        case 3 : // CIMA
-            novaPosicao = make_pair(posicaoJogador.first + 1, posicaoJogador.second);
-            if (verificaLimite(novaPosicao)) {
-                if (!verificaParede(novaPosicao)) {
-                    if (verificaItem(novaPosicao)) {
-                        itensColetados++;
-                    }
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
-                    posicaoJogador = novaPosicao;
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
-
-                }
-            }
-            break;
-
-        case 4 : // BAIXO
-            novaPosicao = make_pair(posicaoJogador.first - 1, posicaoJogador.second);
-            if (verificaLimite(novaPosicao)) {
-                if (!verificaParede(novaPosicao)) {
-                    if (verificaItem(novaPosicao)) {
-                        itensColetados++;
-                    }
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
-                    posicaoJogador = novaPosicao;
-                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
-
-                }
-            }
-            break;
-    }
-}
-
 void telaIntroducao() {
-
-    cout << "\n00---------_000000_---00000000---00---00000000---00---00_____00---00000000---_000000_\n\r";
-    cout << "00---------00000000---00000000---__---00000000---__---000____00---00000000---00000000\n\r";
-    cout << "00---------00____00---00____0----00---00____00---00---0000___00------00------00____00\n\r";
-    cout << "00---------00000000---000000-----00---00000000---00---00_00__00------00------00____00\n\r";
-    cout << "00---------00000000---000000-----00---0000000----00---00__00_00------00------00____00\n\r";
-    cout << "00---------00____00---00____0----00---00_00------00---00___0000------00------00____00\n\r";
-    cout << "00000000---00____00---00000000---00---00___00----00---00____000------00------00000000\n\r";
-    cout << "00000000---00____00---00000000---00---00____00---00---00_____00------00------_000000_\n\r";
-    cout << "\nCarregando...\n";
-    sleep(3.5); // tempo da tela de instrodução
+    limpaTela();
+    cout << "\r" << endl;                                                                                     
+    cout << " _       _    _       _       _        \n\r";
+    cout << "| | ___ | |_ |_| ___ |_| ___ | |_  ___ \n\r";
+    cout << "| || .'|| . || ||  _|| ||   ||  _|| . |\n\r";
+    cout << "|_||__,||___||_||_|  |_||_|_||_|  |___|\n\r";
+    cout << "---------------------------------------\n\r";
+    cout << " _       _    _       _       _        \n\r";
+    cout << "| | ___ | |_ |_| ___ |_| ___ | |_  ___ \n\r";
+    cout << "| || .'|| . || ||  _|| ||   ||  _|| . |\n\r";
+    cout << "|_||__,||___||_||_|  |_||_|_||_|  |___|\n\r";
+    cout << "---------------------------------------\n\r";
+    cout << " _       _    _       _       _        \n\r";
+    cout << "| | ___ | |_ |_| ___ |_| ___ | |_  ___ \n\r";
+    cout << "| || .'|| . || ||  _|| ||   ||  _|| . |\n\r";
+    cout << "|_||__,||___||_||_|  |_||_|_||_|  |___|\n\r";
+    cout << "---------------------------------------\n\r";     
+    cout << "\nCarregando...\r" << endl;
+    sleep(3); // tempo da tela de introdução
 
 }
 
-int main() {
-    initscr();
-    keypad(stdscr, TRUE);
-    char key;
-    int asciiValue;
+void carregaFase(int fase) {
     char ch;
     ifstream inFile;
 
-    inFile.open("test2.txt"); // novo labirinto test2
+    itensRestantes = 1;
+    itensColetados = 0;
+
+    string nomeArquivo = "fase" + to_string(fase) + ".txt";
+    inFile.open(nomeArquivo);
     if (!inFile) {
         cout << "Unable to open file - ";
         abort(); // terminate with error
     }
-
-    cout<<"\e[8;25;100t"; // redimencionar o terminal
-    telaIntroducao();
 
     // read chars from file
     int i = 0;
@@ -172,18 +101,104 @@ int main() {
             i++;
             j = 0;
         }
+        if(ch == ITEM) {
+            itensRestantes += 1;
+        }
     }
+
     inFile.close();
 
-    imprimeLabirinto();
+}
+
+bool verificaLimite(pair <int, int> coord) {
+    return coord.first < LINHAS_LABIRINTO && coord.first >= 0 && coord.second < COLUNAS_LABIRINTO && coord.second >= 0;
+}
+
+bool verificaParede(pair <int, int> coord) {
+    return labirinto[coord.first][coord.second] == PAREDE;
+}
+
+void verificaItem(pair <int, int> coord) {
+    if (labirinto[coord.first][coord.second] == ITEM) {
+        itensColetados++;
+        itensRestantes--;
+    }
+}
+
+void moveJogador(int direcao) {
+    pair <int, int> novaPosicao;
+    switch(direcao) {
+        case 1 : // ESQUERDA
+            novaPosicao = make_pair(posicaoJogador.first, posicaoJogador.second - 1);
+            if (verificaLimite(novaPosicao)) {
+                if (!verificaParede(novaPosicao)) {
+                    verificaItem(novaPosicao);
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
+                    posicaoJogador = novaPosicao;
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
+
+                }
+            }
+            break;
+
+        case 2 : // DIREITA
+            novaPosicao = make_pair(posicaoJogador.first, posicaoJogador.second + 1);
+            if (verificaLimite(novaPosicao)) {
+                if (!verificaParede(novaPosicao)) {
+                    verificaItem(novaPosicao);
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
+                    posicaoJogador = novaPosicao;
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
+
+                }
+            }
+            break;
+
+        case 3 : // CIMA
+            novaPosicao = make_pair(posicaoJogador.first + 1, posicaoJogador.second);
+            if (verificaLimite(novaPosicao)) {
+                if (!verificaParede(novaPosicao)) {
+                    verificaItem(novaPosicao);
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
+                    posicaoJogador = novaPosicao;
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
+
+                }
+            }
+            break;
+
+        case 4 : // BAIXO
+            novaPosicao = make_pair(posicaoJogador.first - 1, posicaoJogador.second);
+            if (verificaLimite(novaPosicao)) {
+                if (!verificaParede(novaPosicao)) {
+                    verificaItem(novaPosicao);
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = ESPACO;
+                    posicaoJogador = novaPosicao;
+                    labirinto[posicaoJogador.first][posicaoJogador.second] = JOGADOR;
+
+                }
+            }
+            break;
+    }
+}
+
+int main() {
+    initscr();
+    keypad(stdscr, TRUE);
+    char key;
+    int asciiValue;
+
+    //cout<<"\e[8;25;100t"; // redimensionar o terminal
+    telaIntroducao();
+    carregaFase(1);
 
     printw("\nAperte alguma tecla para começar...");
 
     key = getch();
     asciiValue = ASCII_VALUE_BEGIN; // valor arbitrario apenas para ser usado dentro do loop
-
+    imprimeLabirinto();
+    
     while(1) {
-
         if (asciiValue == 27)
             break;
 
@@ -196,11 +211,21 @@ int main() {
         }  else if (asciiValue == 80 || asciiValue == 2) {
             moveJogador(CIMA);
         }
-
+        
         imprimeLabirinto();
         cout << endl;
-        cout << "\rItens coletados: " << itensColetados << endl;
+        cout << "\rItens restantes: " << itensRestantes << endl;
 
+        // verifica os itens pegos para passar de fase
+        if (itensRestantes == 0) {
+            faseAtual += 1;
+            if (faseAtual == 3) {
+                break;
+            }
+            carregaFase(faseAtual);
+            imprimeLabirinto();
+        }
+        
         key = getch();
         asciiValue = key;
     }
