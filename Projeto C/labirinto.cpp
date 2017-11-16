@@ -14,7 +14,7 @@ char PAREDE = '#';
 char ITEM = '*';
 char JOGADOR = '@';
 char ESPACO = ' ';
-char ASCII_VALUE_BEGIN = 'N';
+char ASCII_VALUE_BEGIN = 'N'; // valor arbitrario apenas para inicializar a variável;
 
 int ESQUERDA = 1;
 int DIREITA = 2;
@@ -80,6 +80,76 @@ void telaIntroducao() {
 
 }
 
+void telaInstrucoes() {
+    limpaTela();
+    cout << "\r" << endl;                                                                                     
+
+    cout << "----------------------------------------------------------------------------\n\r";
+    cout << "---------------------------------INSTRUÇÕES---------------------------------\n\r";
+    cout << "----------------------------------------------------------------------------\n\r";
+    cout << "1 - USE OS DIRECIONAIS PARA MOVER O JOGADOR REPRESENTADO POR \"@\" -----------\n\r";
+    cout << "2 - COLETE OS ITENS \"*\" ESPALHADOS NO LABIRINTO ----------------------------\n\r";
+    cout << "3 - SE COLETAR TODOS ITENS DA FASE AUTOMATICAMENTE VOCÊ PASSA PARA PROXIMA--\n\r";
+    cout << "4 - FIQUE DE OLHO NO TEMPO QUE VOCÊ TEM PARA PERCORRER AS FASES-------------\n\r";
+    cout << "5 - CADA ITEM TEM UM SCORE QUE É ACUMULADO AO LONGA DAS FASES---------------\n\r";
+    cout << "6 - A CADA FASE CONCLUIDA VOCÊ GANHA UM BÔNUS NO SCORE, PROPORCIONAL A FASE \n\r";
+    cout << " ALCANÇADA------------------------------------------------------------------\n\r";
+    cout << "----------------------------------------------------------------------------\n\r"; 
+    cout << "----------------------------------------------------------------------------\n\r"; 
+    cout << "\n                        \033[1;33m[2] - MENU\033[0m ||| [ESC] - SAIR                         \r" << endl;
+
+    int asciiValue;
+    asciiValue = getch();
+
+    if (asciiValue == 27) {
+	limpaTela();
+	endwin();
+	exit(0);
+    } else if (asciiValue == 50) {
+        return;
+    } else {
+	telaInstrucoes();
+    }
+
+}
+
+void telaMenu() {
+    limpaTela();
+    cout << "\r" << endl;
+    cout << "-------------------------------------------------\n\r";                                                                              
+    cout << "----------------------MENU-----------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "----- _       _    _       _       _        -----\n\r";
+    cout << "-----| | ___ | |_ |_| ___ |_| ___ | |_  ___ -----\n\r";
+    cout << "-----| || .'|| . || ||  _|| ||   ||  _|| . |-----\n\r";
+    cout << "-----|_||__,||___||_||_|  |_||_|_||_|  |___|-----\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";     
+    cout << "\n\033[1;36m [1] - JOGAR\033[0m || \033[1;33m[2] - INSTRUÇÕES\033[0m || [ESC] - SAIR\r" << endl;
+
+    int asciiValue;
+    asciiValue = getch();
+
+    if (asciiValue == 27) {
+	limpaTela();
+	endwin();
+	exit(0);
+    } else if (asciiValue == 49) {
+        return;
+    } else if (asciiValue == 50) {
+       telaInstrucoes();
+       telaMenu();
+    } else {
+	telaMenu();
+    }
+
+}
+
 void telaConclusao() {
     limpaTela();
     cout << "\r" << endl;                                                                                     
@@ -95,7 +165,7 @@ void telaConclusao() {
     cout << "--------------------------------------------\n\r";
     cout << "--------------------------------------------\n\r";     
     cout << "\r\033[1;34m---------------> SCORE FINAL: " << score << "\033[0m" << endl;
-    sleep(6); // tempo da tela de introdução
+    sleep(6); // tempo da tela de conclusao
 
 }
 
@@ -212,14 +282,13 @@ int main() {
     initscr();
     keypad(stdscr, TRUE);
     char key;
-    int asciiValue;
+    int asciiValue = ASCII_VALUE_BEGIN;
 
     telaIntroducao();
     carregaFase(1);
 
-    printw("\nAperte alguma tecla para começar...");
-    key = getch();
-    asciiValue = ASCII_VALUE_BEGIN; // valor arbitrario apenas para ser usado dentro do loop
+    refresh();
+    telaMenu();
 
     imprimeLabirinto();
     tempoInicial = time(0); // inicio do jogo
@@ -247,7 +316,7 @@ int main() {
 	cout << "\r\033[1;32m Itens coletados: " << itensColetados << "\033[0m"
 		<< " || \033[1;34mScore: " << score << "\033[0m" 
 		<< " || \033[1;31mTempo Restante: " << tempoRestante  << "\033[0m" 
-		<< " || " << "[ESC] - Sair"
+		<< " || " << "[ESC] - SAIR"
 		<< endl;
 
  	timeout(1000); // função que garante a execução do bloco (com ou sem entrada de teclado);
