@@ -30,11 +30,12 @@ pair <int, int> posicaoJogador;
 int itensRestantes = 0;
 int itensColetados = 0;
 int score = 0;
+int bonus = 0;
 
 long tempoInicial = 0;
 long tempoAtual = 0;
 long tempoRestante = 0;
-long tempoTotal = 200;
+long tempoTotal = 200; // tempo estimado em segundos para finalizar jogo
 
 void limpaTela(){
     #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
@@ -84,18 +85,18 @@ void telaInstrucoes() {
     limpaTela();
     cout << "\r" << endl;                                                                                     
 
-    cout << "----------------------------------------------------------------------------\n\r";
-    cout << "---------------------------------INSTRUÇÕES---------------------------------\n\r";
-    cout << "----------------------------------------------------------------------------\n\r";
-    cout << "1 - USE OS DIRECIONAIS PARA MOVER O JOGADOR REPRESENTADO POR \"@\" -----------\n\r";
-    cout << "2 - COLETE OS ITENS \"*\" ESPALHADOS NO LABIRINTO ----------------------------\n\r";
-    cout << "3 - SE COLETAR TODOS ITENS DA FASE AUTOMATICAMENTE VOCÊ PASSA PARA PROXIMA--\n\r";
-    cout << "4 - FIQUE DE OLHO NO TEMPO QUE VOCÊ TEM PARA PERCORRER AS FASES-------------\n\r";
-    cout << "5 - CADA ITEM TEM UM SCORE QUE É ACUMULADO AO LONGA DAS FASES---------------\n\r";
-    cout << "6 - A CADA FASE CONCLUIDA VOCÊ GANHA UM BÔNUS NO SCORE, PROPORCIONAL A FASE \n\r";
-    cout << " ALCANÇADA------------------------------------------------------------------\n\r";
-    cout << "----------------------------------------------------------------------------\n\r"; 
-    cout << "----------------------------------------------------------------------------\n\r"; 
+    cout << "------------------------------------------------------------------------------\n\r";
+    cout << "---------------------------------INSTRUÇÕES-----------------------------------\n\r";
+    cout << "------------------------------------------------------------------------------\n\r";
+    cout << "1 - USE OS DIRECIONAIS PARA MOVER O JOGADOR REPRESENTADO POR \"@\" -------------\n\r";
+    cout << "2 - COLETE OS ITENS \"*\" ESPALHADOS NO LABIRINTO ------------------------------\n\r";
+    cout << "3 - SE COLETAR TODOS OS ITENS DA FASE AUTOMATICAMENTE VOCÊ PASSA PARA PRÓXIMA-\n\r";
+    cout << "4 - FIQUE DE OLHO NO TEMPO QUE VOCÊ TEM PARA PERCORRER AS FASES---------------\n\r";
+    cout << "5 - CADA ITEM TEM UM SCORE QUE É ACUMULADO AO LONGA DAS FASES-----------------\n\r";
+    cout << "6 - A CADA FASE CONCLUÍDA, VOCÊ GANHA UM BÔNUS NO SCORE, PROPORCIONAL A FASE  \n\r";
+    cout << " ALCANÇADA--------------------------------------------------------------------\n\r";
+    cout << "------------------------------------------------------------------------------\n\r"; 
+    cout << "------------------------------------------------------------------------------\n\r"; 
     cout << "\n                        \033[1;33m[2] - MENU\033[0m ||| [ESC] - SAIR                         \r" << endl;
 
     int asciiValue;
@@ -116,7 +117,7 @@ void telaInstrucoes() {
 void telaMenu() {
     limpaTela();
     cout << "\r" << endl;
-    cout << "-------------------------------------------------\n\r";                                                                              
+    cout << "-------------------------------------------------\n\r";                                                                    
     cout << "----------------------MENU-----------------------\n\r";
     cout << "-------------------------------------------------\n\r";
     cout << "----- _       _    _       _       _        -----\n\r";
@@ -150,6 +151,33 @@ void telaMenu() {
 
 }
 
+void telaFaseAtual(int faseAtual) {
+    limpaTela();
+
+    cout << "\r" << endl;                                      
+    cout << "--------------------------------------------\n\r";                                               
+    cout << "--------------------------------------------\n\r";                                               
+    cout << "--------------------------------------------\n\r";
+    cout << "-------------------F------------------------\n\r";
+    sleep(1); 
+    cout << "--------------------A-----------------------\n\r";
+    sleep(1); 
+    cout << "---------------------S----------------------\n\r";
+    sleep(1); 
+    cout << "----------------------E---------------------\n\r";
+    sleep(1); 	
+    cout << "-----------------------"<< faseAtual <<"--------------------\n\r";
+    sleep(1); 	
+    cout << "--------------------------------------------\n\r";                                               
+    cout << "--------------------------------------------\n\r";                                               
+    cout << "--------------------------------------------\n\r";
+    cout << "\r\033[1;36m----------> SCORE: " << score-bonus << "\033[0m " << "\033[0;32mBÔNUS: +" << bonus << "\033[0m " << endl;   
+    cout << "\r\033[1;34m----------> SCORE ATUAL: " << score << "\033[0m" << endl;
+    sleep(2);
+
+    tempoInicial+=7; // tempo acrescido pelo delay dos sleep's
+}
+
 void telaConclusao() {
     limpaTela();
     cout << "\r" << endl;                                                                                     
@@ -163,9 +191,34 @@ void telaConclusao() {
     cout << "|___||__,||_|_|_||___   |___||___||___ |_|  \n\r";
     cout << "--------------------------------------------\n\r";
     cout << "--------------------------------------------\n\r";
+    cout << "--------------------------------------------\n\r";
     cout << "--------------------------------------------\n\r";     
-    cout << "\r\033[1;34m---------------> SCORE FINAL: " << score << "\033[0m" << endl;
+    cout << "\r\033[1;34m--------------> SCORE FINAL: " << score << "\033[0m " << endl;
     sleep(6); // tempo da tela de conclusao
+
+}
+
+void telaFinal() {
+    limpaTela();
+    cout << "\r" << endl;                                                                                     
+    cout << "-------------------------------------------------\n\r";                                                                    
+    cout << "--------------------PARABÉNS---------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "----- _       _    _       _       _        -----\n\r";
+    cout << "-----| | ___ | |_ |_| ___ |_| ___ | |_  ___ -----\n\r";
+    cout << "-----| || .'|| . || ||  _|| ||   ||  _|| . |-----\n\r";
+    cout << "-----|_||__,||___||_||_|  |_||_|_||_|  |___|-----\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "----------------VOCÊ--É--INCRIVEL----------------\n\r";
+    cout << "-------------------------------------------------\n\r";
+    cout << "-------------------------------------------------\n\r";     
+    cout << "\r\033[1;36m----------> SCORE: " << score-bonus << "\033[0m " << "\033[0;32mBÔNUS: +" << bonus << "\033[0m " << endl;   
+    cout << "\r\033[1;34m----------> SCORE FINAL: " << score << "\033[0m" << endl;
+    sleep(10); // tempo da tela final
+    telaMenu();
 
 }
 
@@ -292,6 +345,7 @@ int main() {
 
     imprimeLabirinto();
     tempoInicial = time(0); // inicio do jogo
+    telaFaseAtual(faseAtual);
 
     while(1) {
         if (asciiValue == 27)
@@ -330,10 +384,13 @@ int main() {
         // verifica os itens pegos para passar de fase
         if (itensRestantes == 0) {
             faseAtual += 1;
-	    score+= (faseAtual*10); // bônus no score por ter completado fase
+	    bonus = faseAtual*10;
+	    score+= bonus; // bônus no score por ter completado fase
             if (faseAtual == 5) {
+		telaFinal();
                 break;
             }
+	    telaFaseAtual(faseAtual);
             carregaFase(faseAtual);
             imprimeLabirinto();
         }
