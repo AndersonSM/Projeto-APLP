@@ -47,6 +47,18 @@ void limpaTela(){
     #endif
 }
 
+void zerarVariaveis() { // após o game over
+    faseAtual = 1;
+    itensRestantes = 0;
+    itensColetados = 0;
+    score = 0;
+    bonus = 0;
+    tempoInicial = 0;
+    tempoAtual = 0;
+    tempoRestante = 0;
+
+}
+
 void imprimeLabirinto() {
     limpaTela();
 
@@ -195,6 +207,8 @@ void telaConclusao() {
     cout << "--------------------------------------------\n\r";     
     cout << "\r\033[1;34m--------------> SCORE FINAL: " << score << "\033[0m " << endl;
     sleep(6); // tempo da tela de conclusao
+
+    zerarVariaveis(); 
 
 }
 
@@ -378,7 +392,7 @@ int main() {
         // condição de termino do jogo por falta de tempo
 	if(tempoRestante==0) {
 	     telaConclusao();		
-	     break;
+	     main();// reinicia o jogo
 	}
 
         // verifica os itens pegos para passar de fase
@@ -386,10 +400,12 @@ int main() {
             faseAtual += 1;
 	    bonus = faseAtual*10;
 	    score+= bonus; // bônus no score por ter completado fase
+
             if (faseAtual == 5) {
 		telaFinal();
-                break;
+		break;
             }
+
 	    telaFaseAtual(faseAtual);
             carregaFase(faseAtual);
             imprimeLabirinto();
