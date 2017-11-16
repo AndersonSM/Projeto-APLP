@@ -29,6 +29,12 @@ int faseAtual = 1;
 pair <int, int> posicaoJogador;
 int itensRestantes = 0;
 int itensColetados = 0;
+int score = 0;
+
+long tempoInicial = 0;
+long tempoAtual = 0;
+long tempoRestante = 0;
+long tempoTotal = 200;
 
 void limpaTela(){
     #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
@@ -74,6 +80,25 @@ void telaIntroducao() {
 
 }
 
+void telaConclusao() {
+    limpaTela();
+    cout << "\r" << endl;                                                                                     
+    cout << "--------------------------------------------\n\r";
+    cout << "--------------------------------------------\n\r";
+    cout << "--------------------------------------------\n\r";
+    cout << "--------------------------------------------\n\r";
+    cout << " ___                                        \n\r";
+    cout << "| __| ___  _____  ___    ___  _ _  ___  ___ \n\r";
+    cout << "| . || .'||     || ..|  | . || | || ..||  _|\n\r";
+    cout << "|___||__,||_|_|_||___   |___||___||___ |_|  \n\r";
+    cout << "--------------------------------------------\n\r";
+    cout << "--------------------------------------------\n\r";
+    cout << "--------------------------------------------\n\r";     
+    cout << "\r\033[1;34m---------------> SCORE FINAL: " << score << "\033[0m" << endl;
+    sleep(6); // tempo da tela de introdução
+
+}
+
 void carregaFase(int fase) {
     char ch;
     ifstream inFile;
@@ -85,7 +110,7 @@ void carregaFase(int fase) {
     inFile.open(nomeArquivo);
     if (!inFile) {
         cout << "Unable to open file - ";
-        abort(); // terminate with error
+        abort(); // aborta secção com erro
     }
 
     // read chars from file
@@ -122,6 +147,7 @@ void verificaItem(pair <int, int> coord) {
     if (labirinto[coord.first][coord.second] == ITEM) {
         itensColetados++;
         itensRestantes--;
+	score += (tempoRestante/3)*itensColetados; // calculo para score do item coletado (quanto menor o tempo para colatar, maior score)
     }
 }
 
@@ -188,16 +214,16 @@ int main() {
     char key;
     int asciiValue;
 
-    //cout<<"\e[8;25;100t"; // redimensionar o terminal
     telaIntroducao();
     carregaFase(1);
 
     printw("\nAperte alguma tecla para começar...");
-
     key = getch();
     asciiValue = ASCII_VALUE_BEGIN; // valor arbitrario apenas para ser usado dentro do loop
+
     imprimeLabirinto();
-    
+    tempoInicial = time(0); // inicio do jogo
+
     while(1) {
         if (asciiValue == 27)
             break;
@@ -213,12 +239,29 @@ int main() {
         }
         
         imprimeLabirinto();
+	
+	tempoAtual = time(0)-tempoInicial;
+	tempoRestante = tempoTotal - tempoAtual;
+
         cout << endl;
-        cout << "\rItens restantes: " << itensRestantes << endl;
+	cout << "\r\033[1;32m Itens coletados: " << itensColetados << "\033[0m"
+		<< " || \033[1;34mScore: " << score << "\033[0m" 
+		<< " || \033[1;31mTempo Restante: " << tempoRestante  << "\033[0m" 
+		<< " || " << "[ESC] - Sair"
+		<< endl;
+
+ 	timeout(1000); // função que garante a execução do bloco (com ou sem entrada de teclado);
+
+        // condição de termino do jogo por falta de tempo
+	if(tempoRestante==0) {
+	     telaConclusao();		
+	     break;
+	}
 
         // verifica os itens pegos para passar de fase
         if (itensRestantes == 0) {
             faseAtual += 1;
+	    score+= (faseAtual*10); // bônus no score por ter completado fase
             if (faseAtual == 5) {
                 break;
             }

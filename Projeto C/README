@@ -1,4 +1,5 @@
 INSTRUÇÕES:
+Confirme se é a versão C++11
 Antes de compilar: sudo apt-get install libncurses5-dev
 Para compilar: g++ labirinto.cpp -lcurses -o labirinto
 Para executar: ./labirinto
