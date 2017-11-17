@@ -35,7 +35,7 @@ int bonus = 0;
 long tempoInicial = 0;
 long tempoAtual = 0;
 long tempoRestante = 0;
-long tempoTotal = 200; // tempo estimado em segundos para finalizar jogo
+long tempoTotal = 275; // tempo estimado em segundos para finalizar jogo
 
 void limpaTela(){
     #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
