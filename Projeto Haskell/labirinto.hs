@@ -24,6 +24,7 @@ printLabel = do
 limpaTela :: IO ()
 limpaTela = do
     clearScreen
+    setCursorPosition 0 0
 
 drawPlayer :: IO ()
 drawPlayer = do
