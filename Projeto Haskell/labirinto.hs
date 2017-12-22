@@ -18,15 +18,27 @@ game maze start pos = do
     walk game maze start pos c
 
 walk game maze start pos input = do
-    if pos == 3 then do
-        putStrLn "Thanks"
-    else if input == "s" then 
+    let tmpd = drop pos maze
+    let tmp1 = head tmpd
+    let tmps = drop (pos + 7) maze
+    let tmp2 = head tmps
+    let tmpw = drop (pos - 9) maze
+    let tmp3 = head tmpw
+    let tmpa = drop (pos - 2) maze
+    let tmp4 = head tmpa
+    
+    let walkableRight = tmp1 /= 1
+    let walkableDown = tmp2 /= 1
+    let walkableUp= tmp3 /= 1
+    let walkableLeft = tmp4 /= 1
+
+    if input == "s" && walkableDown then do
         game maze start (pos + 8)
-    else if input == "w" then 
+    else if input == "w" && walkableUp then 
         game maze start (pos - 8)
-    else if input == "d" then 
+    else if input == "d" && walkableRight then 
         game maze start (pos + 1)
-    else if input == "a" then 
+    else if input == "a" && walkableLeft then 
         game maze start (pos - 1)
     else
         game maze start pos
