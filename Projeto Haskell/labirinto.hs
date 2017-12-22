@@ -3,6 +3,22 @@ import System.Console.ANSI
 import Control.Concurrent
 import Control.Concurrent.STM
 
+levelChange :: IO ()
+levelChange = do                                    
+    putStrLn "--------------------------------------------"                                               
+    putStrLn "--------------------------------------------"                                               
+    putStrLn "--------------------------------------------"
+    putStrLn "-------------------F------------------------"
+    putStrLn "--------------------A-----------------------"
+    putStrLn "---------------------S----------------------"
+    putStrLn "----------------------E---------------------"
+    putStrLn "------------------------2-------------------"  
+    putStrLn "--------------------------------------------"                                               
+    putStrLn "--------------------------------------------"                                               
+    putStrLn "--------------------------------------------"
+    threadDelay 2000000
+    clearScreen
+
 printLabel :: IO ()
 printLabel = do
     putStrLn " _       _    _       _       _        "
@@ -20,6 +36,27 @@ printLabel = do
     putStrLn "| || .'|| . || ||  _|| ||   ||  _|| . |"
     putStrLn "|_||__,||___||_||_|  |_||_|_||_|  |___|"
     putStrLn "---------------------------------------" 
+
+printGameFinal :: Int ->IO ()
+printGameFinal score = do
+    clearScreen
+    putStrLn "-------------------------------------------------"                                                                   
+    putStrLn "--------------------PARABÉNS---------------------"
+    putStrLn "-------------------------------------------------"
+    putStrLn "----- _       _    _       _       _        -----"
+    putStrLn "-----| | ___ | |_ |_| ___ |_| ___ | |_  ___ -----"
+    putStrLn "-----| || .'|| . || ||  _|| ||   ||  _|| . |-----"
+    putStrLn "-----|_||__,||___||_||_|  |_||_|_||_|  |___|-----"
+    putStrLn "-------------------------------------------------"
+    putStrLn "------------------Você chegou ao final-----------"
+    putStrLn "-------------------------------------------------"
+    putStrLn "-------------------------------------------------"
+    putStrLn "----------------VOCÊ--É--INCRIVEL !?-------------"
+    putStrLn "-------------------------------------------------"
+    putStr "Pontos :"
+    setSGR [SetColor Foreground Vivid Red]
+    print score
+    threadDelay 5000000    
 
 limpaTela :: IO ()
 limpaTela = do
@@ -77,9 +114,7 @@ game :: [([Int],[Int])] -> [Int] -> Int -> Int -> Int -> [Int] -> IO()
 game mazes maze start pos points items = do
 
     if start < 0 then do
-        putStr "\n\n---JOGO FINALIZADO----\n\n"
-        putStr "Pontos :"
-        print points
+      printGameFinal points
         
     else do
         show_maze maze start pos items  
@@ -127,7 +162,6 @@ walk game mazes maze start pos points input items = do
             let newPos = 1
             let newStart = 1
             let newItems = snd (head newMazes)
-            putStr "\n\n--PASSOU DE FASE--\n\n"
             limpaTela
             threadDelay  1200000     
             if (length newMazes == 0) then do
@@ -150,7 +184,6 @@ walk game mazes maze start pos points input items = do
             let newPos = 1
             let newStart = 1
             let newItems = snd (head newMazes)
-            putStr "\n\n--PASSOU DE FASE--\n\n"
             limpaTela
             threadDelay  1200000     
             if (length newMazes == 0) then do
@@ -174,14 +207,11 @@ walk game mazes maze start pos points input items = do
             let newPos = 1
             let newStart = 1
             let newItems = snd (head newMazes)
-            putStr "\n\n--PASSOU DE FASE--\n\n"
-            limpaTela
-            threadDelay  1200000     
             if (length newMazes == 0) then do
-                let newStart = -1
-                game newMazes newMaze newStart newPos points newItems  
-            else
-                 game newMazes newMaze newStart newPos points newItems     
+              printGameFinal points
+            else do
+              levelChange
+              game newMazes newMaze newStart newPos points newItems     
             
         else
             game newMazes newMaze newStart newPos points newItems
@@ -197,7 +227,6 @@ walk game mazes maze start pos points input items = do
             let newPos = 1
             let newStart = 1
             let newItems = snd (head newMazes)
-            putStr "\n\n--PASSOU DE FASE--\n\n"
             limpaTela
             threadDelay  1200000     
             if (length newMazes == 0) then do
