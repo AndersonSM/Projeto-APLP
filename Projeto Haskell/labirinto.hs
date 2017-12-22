@@ -1,18 +1,9 @@
 import System.IO
+import System.Console.ANSI
 
-main :: IO ()
-main = do
-    let maze = [0,1,1,1,1,1,1,1,
-                0,0,0,0,0,0,0,1,
-                1,0,0,0,2,0,0,1,
-                1,0,0,0,0,0,0,1,
-                1,0,0,0,0,0,0,1,
-                1,0,0,0,0,0,0,3,
-                1,0,0,0,0,0,0,1,
-                1,1,1,1,1,1,1,1]
-    let start = 1
-    let pos = 1
-    game maze start pos
+limpaTela :: IO ()
+limpaTela = do
+    clearScreen
 
 game :: [Int] -> Int -> Int -> IO()
 game maze start pos = do
@@ -20,6 +11,7 @@ game maze start pos = do
     putStrLn "Digite seu comando (a,w,s,d) e aperte enter"
     c <- getLine
     putStr "\n--------\n"
+    limpaTela
     let newpos = pos + 1
     let tmp = drop pos maze
     let tmp1 = head tmp
@@ -37,7 +29,21 @@ walk game maze start pos input = do
     else if input == "a" then 
         game maze start (pos - 1)
     else
-        game maze start pos    
+        game maze start pos
+
+drawPlayer :: IO ()
+drawPlayer = do
+    setSGR [SetConsoleIntensity BoldIntensity]
+    setSGR [SetColor Foreground Vivid Blue]
+    putStr "@"
+    setSGR [Reset]
+
+drawBonus :: IO ()
+drawBonus = do
+    setSGR [SetConsoleIntensity BoldIntensity]
+    setSGR [SetColor Foreground Vivid Red]   
+    putStr "*"
+    setSGR [Reset] 
 
 show_maze :: [Int] -> Int -> Int -> IO()
 show_maze maze counter pos = do
@@ -55,11 +61,11 @@ show_maze maze counter pos = do
 decide :: Int -> Int -> Int -> IO()
 decide h pos counter = do
     if counter == pos then
-        putStr "@"
+        drawPlayer
     else if h == 0 then
         putStr "."
     else if h == 2 then
-        putStr "*"
+        drawBonus
     else if h == 3 then
         putStr "$"
     else
@@ -72,3 +78,36 @@ cr_if_mult_8 c = do
         putStrLn ""
     else
         putStr ""
+
+main :: IO ()
+main = do
+    let maze = [0,1,1,1,1,1,1,1,
+                0,0,0,0,0,0,0,1,
+                1,0,1,1,0,1,0,1,
+                1,0,1,0,0,1,2,1,
+                1,0,1,2,1,1,1,1,
+                1,0,1,1,1,0,0,3,
+                1,0,0,0,0,0,1,1,
+                1,1,1,1,1,1,1,1]
+    
+    let maze2 = [0,1,1,1,1,1,1,1,
+                0,0,0,0,0,0,0,1,
+                1,0,0,0,2,0,0,1,
+                1,0,0,0,0,0,0,1,
+                1,0,0,0,0,0,0,1,
+                1,0,0,0,0,0,0,3,
+                1,0,0,0,0,0,0,1,
+                1,1,1,1,1,1,1,1]
+    
+    let maze3 = [0,1,1,1,1,1,1,1,
+                0,0,0,0,0,0,0,1,
+                1,0,0,0,2,0,0,1,
+                1,0,0,0,0,0,0,1,
+                1,0,0,0,0,0,0,1,
+                1,0,0,0,0,0,0,3,
+                1,0,0,0,0,0,0,1,
+                1,1,1,1,1,1,1,1]
+
+    let start = 1
+    let pos = 1
+    game maze start pos
