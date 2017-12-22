@@ -1,7 +1,51 @@
+--DO IT in terminar :  cabal install ansi-terminal
 import System.IO
+import System.Console.ANSI
+import Control.Concurrent
+import Control.Concurrent.STM
+
+printLabel :: IO ()
+printLabel = do
+    putStrLn " _       _    _       _       _        "
+    putStrLn "| | ___ | |_ |_| ___ |_| ___ | |_  ___ "
+    putStrLn "| || .'|| . || ||  _|| ||   ||  _|| . |"
+    putStrLn "|_||__,||___||_||_|  |_||_|_||_|  |___|"
+    putStrLn "---------------------------------------"
+    putStrLn " _       _    _       _       _        "
+    putStrLn "| | ___ | |_ |_| ___ |_| ___ | |_  ___ "
+    putStrLn "| || .'|| . || ||  _|| ||   ||  _|| . |"
+    putStrLn "|_||__,||___||_||_|  |_||_|_||_|  |___|"
+    putStrLn "---------------------------------------"
+    putStrLn " _       _    _       _       _        "
+    putStrLn "| | ___ | |_ |_| ___ |_| ___ | |_  ___ "
+    putStrLn "| || .'|| . || ||  _|| ||   ||  _|| . |"
+    putStrLn "|_||__,||___||_||_|  |_||_|_||_|  |___|"
+    putStrLn "---------------------------------------" 
+
+limpaTela :: IO ()
+limpaTela = do
+    clearScreen
+
+drawPlayer :: IO ()
+drawPlayer = do
+    setSGR [SetConsoleIntensity BoldIntensity]
+    setSGR [SetColor Foreground Vivid Blue]
+    putStr "@"
+    setSGR [Reset]
+
+drawBonus :: IO ()
+drawBonus = do
+    setSGR [SetConsoleIntensity BoldIntensity]
+    setSGR [SetColor Foreground Vivid Red]   
+    putStr "*"
+    setSGR [Reset] 
 
 main :: IO ()
 main = do
+    setTitle "O Labirinto"
+    printLabel
+    threadDelay  2000000 
+    limpaTela
     let maze = [0,1,1,1,1,1,1,1,0,0,0,0,2,0,0,1,1,0,0,2,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,3,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1 ]
     let items = [13,20]
     let start = 1
@@ -18,6 +62,7 @@ game maze start pos points items = do
     putStr "\n--------\n"
     putStr "Pontos :"
     print points
+    limpaTela
     
 
     if (pos `elem` items) then do
@@ -68,11 +113,11 @@ show_maze maze counter pos items = do
 decide :: Int -> Int -> Int -> [Int] -> IO()
 decide h pos counter items = do
     if counter == pos then
-        putStr "@"
+        drawPlayer
     else if h == 1 then
         putStr "#"
     else if h == 2 && (counter `elem` items) then
-        putStr "*"
+        drawBonus
     else if h == 3 then
         putStr "$"
     else
