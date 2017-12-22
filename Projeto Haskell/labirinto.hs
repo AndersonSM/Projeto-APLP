@@ -4,6 +4,7 @@ import System.Console.ANSI
 limpaTela :: IO ()
 limpaTela = do
     clearScreen
+    setCursorPosition 0 0
 
 game :: [Int] -> Int -> Int -> IO()
 game maze start pos = do
