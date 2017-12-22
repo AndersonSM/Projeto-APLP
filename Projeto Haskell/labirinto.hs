@@ -93,6 +93,7 @@ cr_if_mult_8 c = do
 
 main :: IO ()
 main = do
+    setTitle "O Labirinto"
     let maze = [0,1,1,1,1,1,1,1,
                 0,0,0,0,0,0,0,1,
                 1,0,1,1,0,1,0,1,
