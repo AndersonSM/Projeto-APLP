@@ -1,0 +1,4 @@
+INSTRUÇÕES:
+Certifique que Prolog esteja instalado na maquina!
+Para executar(no diretório do arquivo labirinto.pl): swipl -q -f labirinto.pl
+*Para jogar: Use as setas do teclado para mover / ESC para sair
