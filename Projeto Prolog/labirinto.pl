@@ -1,5 +1,15 @@
 limpaTela :- write('\e[H\e[2J').
 
+getch(1) :- 
+	limpaTela,
+	imprimeTelaNivel.
+getch(2) :- 
+	limpaTela,
+	imprimeTelaInstrucoes.
+getch(3) :- 
+	limpaTela,
+	imprimeTelaMenu.
+
 imprimeTelaInicial :-
 	limpaTela,
 	write(" _       _    _       _       _        "),nl,
@@ -17,18 +27,9 @@ imprimeTelaInicial :-
 	write("| || .'|| . || ||  _|| ||   ||  _|| . |"),nl,
 	write("|_||__,||___||_||_|  |_||_|_||_|  |___|"),nl,
 	write("---------------------------------------"),nl,
+	write("carregando..."),nl,
 	sleep(3),
 	limpaTela.
-
-getch(1) :- 
-	limpaTela,
-	imprimeTelaNivel.
-getch(2) :- 
-	limpaTela,
-	imprimeTelaInstrucoes.
-getch(3) :- 
-	limpaTela,
-	imprimeTelaMenu.
 
 imprimeTelaMenu :-
 	write("-------------------------------------------------"),nl,
@@ -49,7 +50,6 @@ imprimeTelaMenu :-
 	write("\033[0m || "),
 	write("\033[1;33m[2] - INSTRUÇÕES"),
 	write("\033[0m || [ESC] - SAIR"),nl,nl,
-	repeat,
 	read_line_to_codes(user_input, X1),
 	string_to_atom(X1,X2),
 	atom_number(X2,N),
@@ -69,7 +69,7 @@ imprimeTelaInstrucoes :-
 	write("----ALCANÇADA----------------------------------------------------------------"),nl,
 	write( "-----------------------------------------------------------------------------"),nl,
 	write( "-----------------------------------------------------------------------------"),nl,
-	write("                         \033[1;33m[3] - MENU\033[0m ||| [ESC] - SAIR        "),nl,
+	write("                   \033[1;36m[1] - JOGAR \033[0m|| \033[1;33m[3] - MENU\033[0m || [ESC] - SAIR"),nl,
 	read_line_to_codes(user_input, X1),
 	string_to_atom(X1,X2),
 	atom_number(X2,N),
@@ -77,29 +77,57 @@ imprimeTelaInstrucoes :-
 
 imprimeTelaNivel :-
 	write("--------------------------------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("--------------------------------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("--------------------------------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("-------------------F------------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("--------------------A-----------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("---------------------S----------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("----------------------E---------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("------------------------1-------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("--------------------------------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("--------------------------------------------"),nl,
-	sleep(0.5),
+	sleep(0.2),
 	write("--------------------------------------------"),nl,
-	sleep(0.5),
-	sleep(1),
-	limpaTela.
+	sleep(3),
+	limpaTela,
+	imprimeLabirinto.
+
+imprimeLabirinto :-
+	carregaFase,
+	read_line_to_codes(user_input, X1),
+	string_to_atom(X1,X2),
+	atom_number(X2,N),
+	getch(N).
+
+carregaFase :-
+	open('fase1.txt', read, Stream),
+	lerArquivo(Stream,Lista_Linhas),
+	close(Stream),
+	imprime_Linha(Lista_Linhas),nl.
+
+/* Imprime sequencialmente cada linha do labirinto */
+imprime_Linha([end_of_file]).
+imprime_Linha([H|T]) :-
+	format('~w\t',H),nl,
+	imprime_Linha(T).
+
+/* Ler cada caractere do arquivo faseX.txt para alimentar uma lista*/
+lerArquivo(Stream,[]) :-
+         at_end_of_stream(Stream).
+  
+lerArquivo(Stream,[H|T]) :-
+         \+  at_end_of_stream(Stream),
+         read(Stream,H),
+         lerArquivo(Stream,T).
 
 :- initialization main.
 main :-
