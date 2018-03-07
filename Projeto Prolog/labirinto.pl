@@ -1,57 +1,63 @@
 limpaTela :- write('\e[H\e[2J').
 
-imprimeTelaInicial :-
-	limpaTela,
-	write(" _       _    _       _       _        "),nl,
-	write("| | ___ | |_ |_| ___ |_| ___ | |_  ___ "),nl,
-	write("| || .'|| . || ||  _|| ||   ||  _|| . |"),nl,
-	write("|_||__,||___||_||_|  |_||_|_||_|  |___|"),nl,
-	write("---------------------------------------"),nl,
-	write(" _       _    _       _       _        "),nl,
-	write("| | ___ | |_ |_| ___ |_| ___ | |_  ___ "),nl,
-	write("| || .'|| . || ||  _|| ||   ||  _|| . |"),nl,
-	write("|_||__,||___||_||_|  |_||_|_||_|  |___|"),nl,
-	write("---------------------------------------"),nl,
-	write(" _       _    _       _       _        "),nl,
-	write("| | ___ | |_ |_| ___ |_| ___ | |_  ___ "),nl,
-	write("| || .'|| . || ||  _|| ||   ||  _|| . |"),nl,
-	write("|_||__,||___||_||_|  |_||_|_||_|  |___|"),nl,
-	write("---------------------------------------"),nl,
-	write("carregando..."),nl,
-	sleep(3),
-	limpaTela.
+matrizVazia([['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#', '#'], 
+				['#', '-', '-', '-', '-','-', '-', '-', '-', '#','#', '-', '-', '-', '#'], 
+				['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
+				['#', '-', '-', '-', '-','#', '-', '-', '-', '-','-', '-', '#', '-', '#'],
+				['#', '#', '#', '#', '#','#', '#', '#', '#', '#','#', '#', '#', '#', '#'],
+				['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#', '#'], 
+				['#', '-', '-', '-', '-','-', '-', '-', '-', '#','#', '-', '-', '-', '#'], 
+				['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
+				['#', '-', '-', '-', '-','#', '-', '-', '-', '-','-', '-', '#', '-', '#'],
+				['#', '#', '#', '#', '#','#', '-', '#', '#', '#','#', '#', '#', '#', '#'],
+				['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#', '#'], 
+				['#', '-', '-', '-', '-','-', '-', '-', '-', '#','#', '-', '-', '-', '#'], 
+				['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
+				['#', '-', '-', '-', '-','#', '-', '-', '-', '-','-', '-', '#', '-', 'S'],
+				['#', '#', '#', '#', '#','#', '#', '#', '#', '#','#', '#', '#', '#', '#']]).
 
-/********* Realiza Ação *********/
-getchMenu(0) :- limpaTela.
-getchMenu(1) :- 
-	limpaTela,
-	imprimeTelaNivel(1).
-getchMenu(2) :- 
-	limpaTela,
-	imprimeTelaInstrucoes.
-getchMenu(3) :- 
-	limpaTela,
-	imprimeTelaMenu.
-getchMenu(Char) :- 
-	limpaTela,
-	imprimeTelaMenu.
+%imprimir linha
+imprimeLinha([]).
+imprimeLinha([H|T]) :- write(H), write(' '), imprimeLinha(T).
 
-getchJogo('w') :- 
-	write('implementar'),nl.
-getchJogo('s') :- 
-	write('implementar'),nl.
-getchJogo('a') :- 
-	write('implementar'),nl.
-getchJogo('d') :- 
-	write('implementar'),nl.
-getchJogo('0') :- 
-	limpaTela,
-	imprimeTelaMenu.
-/********************************/
+%imprime matriz
+desenhaLabirinto([]).
+desenhaLabirinto([H|T]) :- 
+	imprimeLinha(H), writeln(''), 	
+	desenhaLabirinto(T).
 
-imprimeTelaMenu :-
+% pegar elemento do index (Row, Col)
+index(Matrix, Row, Col, Value):-
+  nth0(Row, Matrix, MatrixRow),
+  nth0(Col, MatrixRow, Value).
+
+%Trocar valor da matrz Mat, nas coordenadas (R,C), pelo valor Val
+apagaPosicaoEAnda(R, C, Mat, Val, Upd) :-
+    nth0(R, Mat, OldRow, RestRows),   % get the row and the rest
+    nth0(C, OldRow, _Val, NewRow),    % we dont care the _Val deleted
+    nth0(C, NewRowUpd,Val,NewRow),		% insert Val into C, where _val was
+    nth0(R, Upd, NewRowUpd, RestRows).   % insert updated row in rest, get Upd matrix
+
+
+verificaEAdd(R, C, MatrizAntes, E, MatrizUpd):-
+	index(MatrizAntes, R, C, Val), % val é o valor da MatrizAntes[R,C].
+	
+	% caso val seja igual a "#" -> MatrizUpd == MatrizAntes
+ 	((    (Val = "#"), 
+		apagaPosicaoEAnda(R,C,MatrizAntes,"#", MatrizUpd));
+
+ 	% caso val seja DIFERENTE a "#" -> MatrizUpd sera atualizada com valor de E
+	(     (Val \= "#"), 
+		apagaPosicaoEAnda(R,C,MatrizAntes,E, MatrizUpd))).
+
+/*================================================== Gera Matriz Jogador ==================================================*/
+criaMatrizComJogador(Maze):-
+	matrizVazia(MatrizInicial),  %pega matriz vazia
+	verificaEAdd(0,1,MatrizInicial,"@", Maze).% coloca o jogador na posicao [0,1]
+
+/*================================================== Imprime Menu ==================================================*/
+imprimeMenu :- 
 	write("-------------------------------------------------"),nl,
-	write("----------------------\033[1;92mMENU\033[0m-----------------------"),nl,
 	write("-------------------------------------------------"),nl,
 	write("----- _       _    _       _       _        -----"),nl,
 	write("-----| | ___ | |_ |_| ___ |_| ___ | |_  ___ -----"),nl,
@@ -63,93 +69,75 @@ imprimeTelaMenu :-
 	write("-------------------------------------------------"),nl,
 	write("-------------------------------------------------"),nl,
 	write("-------------------------------------------------"),nl,
-	write("-------------------------------------------------"),nl,
-	write("\033[1;36m  [1] - JOGAR"),
-	write("\033[0m || "),
-	write("\033[1;33m[2] - INSTRUÇÕES"),
-	write("\033[0m || [0] - SAIR"),nl,nl,
-	read_line_to_codes(user_input, X1),
-	string_to_atom(X1,X2),
-	atom_number(X2,N),
-	getchMenu(N).
+	writeln("-------------------------------------------------").
 
-imprimeTelaInstrucoes :-
-	limpaTela,                                                                                     
-	write("------------------------------------------------------------------------------"),nl,
-	write("---------------------------------INSTRUÇÕES-----------------------------------"),nl,
-	write("-----------------------------------------------------------------------------"),nl,
-	write("1 - USE OS DIRECIONAIS PARA MOVER O JOGADOR REPRESENTADO POR \"@\" ------------"),nl,
-	write("2 - COLETE OS ITENS \"*\" ESPALHADOS NO LABIRINTO -----------------------------"),nl,
-	write("3 - SE COLETAR TODOS OS ITENS DA FASE AUTOMATICAMENTE VOCÊ PASSA PARA PRÓXIMA"),nl,
-	write("4 - FIQUE DE OLHO NO TEMPO QUE VOCÊ TEM PARA PERCORRER AS FASES--------------"),nl,
-	write("5 - CADA ITEM TEM UM SCORE QUE É ACUMULADO AO LONGA DAS FASES----------------"),nl,
-	write("6 - A CADA FASE CONCLUÍDA, VOCÊ GANHA UM BÔNUS NO SCORE, PROPORCIONAL A FASE "),nl,
-	write("----ALCANÇADA----------------------------------------------------------------"),nl,
-	write( "-----------------------------------------------------------------------------"),nl,
-	write( "-----------------------------------------------------------------------------"),nl,
-	write("                     \033[1;36m[1] - JOGAR \033[0m|| \033[1;33m[3] - MENU\033[0m || [0] - SAIR"),nl,
-	read_line_to_codes(user_input, X1),
-	string_to_atom(X1,X2),
-	atom_number(X2,N),
-	getchMenu(N).
+/*================================================== Iniciar matriz ==================================================*/
+geraMatrizElemento(MazeElements):-
+	matrizVazia(MatrizInicial).  %pega matriz vazia
 
-imprimeTelaNivel(Nivel) :-
-	write("--------------------------------------------"),nl,
-	sleep(0.2),
-	write("--------------------------------------------"),nl,
-	sleep(0.2),
-	write("--------------------------------------------"),nl,
-	sleep(0.2),
-	write("-------------------F------------------------"),nl,
-	sleep(0.2),
-	write("--------------------A-----------------------"),nl,
-	sleep(0.2),
-	write("---------------------S----------------------"),nl,
-	sleep(0.2),
-	write("----------------------E---------------------"),nl,
-	sleep(0.2),
-	format("------------------------~d-------------------",Nivel),nl,
-	sleep(0.2),
-	write("--------------------------------------------"),nl,
-	sleep(0.2),
-	write("--------------------------------------------"),nl,
-	sleep(0.2),
-	write("--------------------------------------------"),nl,
-	sleep(3),
+/* ================================================== Andar ==================================================*/
+
+andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou):-
+	moveJogador(Maze, ProximoMaze),
 	limpaTela,
-	imprimeLabirinto(Nivel).
+	desenhaLabirinto(ProximoMaze),
+	index(ProximoMaze,R,C,"@"),                  % pegar nova Coordenada Jogador
+	index(MazeElements,R,C, Val),				% valor da matriz de elementos.
+	
+	((Encontrou = "sim", RI=R, CI=C, writeln("Você ganhou!!"));
 
-imprimeLabirinto(Nivel) :-
-	carregaFase(Nivel),
-	write("\033[1;31m SCORE \033[0m|| \033[1;33m[0] - MENU\033[0m "),nl,nl,
-	read_line_to_codes(user_input, X1),
-	string_to_atom(X1,Char),
-	getchJogo(Char).
+	((Val = "-"), (andaParaPosicao(ProximoMaze, MazeElements,RI,CI,Encontrou)));
+	((val = "S" ),writeln("\nVocê ganhouuuu !!!!!!"),
+		andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim"));                    % elseifcaso Val for S ganha
+			
+	(andaParaPosicao(ProximoMaze, MazeElements,RI,CI, Encontrou))). 							% else loop,
 
-carregaFase(Nivel) :-
-	atom_concat('fase', Nivel, NomeNivel),
-	atom_concat(NomeNivel, '.txt', NomeArquivo),
-	open(NomeArquivo, read, Stream),
-	lerArquivo(Stream,Lista_Linhas),
-	close(Stream),
-	imprime_Linha(Lista_Linhas).
+moveJogador(Maze, ProximoMaze):-
+	writeln(" "),
+	writeln("\n Para andar digite: up: cima, down: baixo, right: direita, left: esquerda. "),
 
-/* Imprime sequencialmente cada linha do labirinto */
-imprime_Linha([end_of_file]).
-imprime_Linha([H|T]) :-
-	format('~w\t',H),nl,
-	imprime_Linha(T).
+	read_line_to_codes(user_input, Entrada),
+    string_to_atom(Entrada,Entrada_),
+    andaNaMatriz(Entrada_,Maze, ProximoMaze).
 
-/* Ler cada caractere do arquivo faseX.txt para alimentar uma lista */
-lerArquivo(Stream,[]) :-
-         at_end_of_stream(Stream).
-lerArquivo(Stream,[H|T]) :-
-         \+  at_end_of_stream(Stream),
-         read(Stream,H),
-         lerArquivo(Stream,T).
+andaNaMatriz(help,Maze, Maze):-
+	imprimeMenu.
+andaNaMatriz(up,Maze, ProximoMaze):-
+	index(Maze,R,C,"@"),                    			% pegar linha e coluna do Jogador
+	Top is (R+14) mod 15,                              			% proxima pos do jogador
+	apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),			% apagando pos anterior
+	apagaPosicaoEAnda(Top,C, MatUpd, "@", ProximoMaze).
+
+andaNaMatriz(down,Maze, ProximoMaze):-
+	index(Maze,R,C,"@"),                             % pegar linha e coluna do Jogador
+	Bot is (R+1) mod 15,                                       % proxima pos do jogador
+	apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),         % apagando pos anterior
+	apagaPosicaoEAnda(Bot,C, MatUpd, "@", ProximoMaze).
+
+andaNaMatriz(left,Maze, ProximoMaze):-
+	index(Maze,R,C,"@"),                             % pegar linha e coluna do Jogador
+	Left is (C+14) mod 15,                                       % proxima pos do jogador
+	apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),         % apagando pos anterior
+	apagaPosicaoEAnda(R,Left, MatUpd, "@", ProximoMaze).
+
+andaNaMatriz(right,Maze, ProximoMaze):-
+	index(Maze,R,C,"@"),                             % pegar linha e coluna do Jogador
+	Right is (C+1) mod 15,                                       % proxima pos do jogador
+	apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),         % apagando pos anterior
+	apagaPosicaoEAnda(R,Right, MatUpd, "@", ProximoMaze).
+
+% Entrada errada
+andaNaMatriz(Entrada,Maze, ProximoMaze):-
+	writeln("Você digitou entrada errada. Digite novamente"),
+	moveJogador(Maze, ProximoMaze).
+
 
 :- initialization main.
-main :-
-	imprimeTelaInicial,
-	imprimeTelaMenu,
-halt(0).
+
+main:-
+	imprimeMenu,
+	criaMatrizComJogador(Maze),
+	desenhaLabirinto(Maze),
+	index(Maze,RI,CI,"@"),
+	index(MazeElements,RI,CI,Val),
+	andaParaPosicao(Maze, MazeElements, RI, CI, "nao").
