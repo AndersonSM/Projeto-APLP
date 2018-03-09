@@ -1,3 +1,4 @@
+:- retractall(matrizVazia(_)).
 limpaTela :- write('\e[H\e[2J').
 
 
@@ -117,16 +118,16 @@ imprimeFim(Score) :-
 	write("-------------------------------------------------"),nl,
 	write("-------------------------------------------------"),nl,
 	write("-------------------------------------------------"),nl,
-	write("            "),
-	write("\033[1;36m Score"),
+	write("                      FIM  "),nl,
+	write("\033[1;36m            Score: "),
 	write(Score),
-	write("\033[0m"),
+	write("\033[0m"),nl,
 	sleep(1.2),
 	halt(0).
 
 
 /* Andar */
-andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou,0):- halt(0).
+andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou,0):- imprimeFim(0),halt(0).
 
 andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou,Score):-
 	NS is (Score - 10),
@@ -137,8 +138,7 @@ andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou,Score):-
 	((Encontrou = "sim", RI=R, CI=C, writeln("Você ganhou!!"));
 
 	((Val = 'E'), (write(""),andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim",NS)));
-	((Val == 'S' ),imprimeFim(NS),
-		andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim",NS));
+	((Val == 'S' ),imprimeFim(NS), halt(0));
 	((Val = '*' ),writeln("\nACERTO MIZERAVI !!!!!!"),	NS2 is (Score + 50),
 		andaParaPosicao(ProximoMaze, MazeElements,R,C,"nao",NS2));  
 			
