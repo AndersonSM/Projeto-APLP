@@ -106,38 +106,37 @@ imprimeMenu :-
 
 /* Andar */
 
-andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou):-
-	moveJogador(Maze, ProximoMaze),
+andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou,Score):-
+	moveJogador(Maze, ProximoMaze,Score),
 	desenhaLabirinto(ProximoMaze),
 	index(ProximoMaze,R,C,"@"), 
 	index(MazeElements,R,C, Val),
 	((Encontrou = "sim", RI=R, CI=C, writeln("Você ganhou!!"));
 
-	((Val = "E"), (write(""),andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim")));
+	((Val = "E"), (write(""),andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim",Score)));
 	((Val = "S" ),writeln("\nVocê ganhouuuu2 !!!!!!"),
-		andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim"));
+		andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim",Score));
 	((Val = "*" ),writeln("\nVocê ganhouuuu3 !!!!!!"),
-		andaParaPosicao(ProximoMaze, MazeElements,R,C,"nao"));  
+		andaParaPosicao(ProximoMaze, MazeElements,R,C,"nao",Score));  
 			
-	(andaParaPosicao(ProximoMaze, MazeElements,R,C, Encontrou))).
+	(andaParaPosicao(ProximoMaze, MazeElements,R,C, Encontrou,Score))).
 
-moveJogador(Maze, ProximoMaze):-
-	writeln(" "),
+moveJogador(Maze, ProximoMaze,Score):-
+	write("\033[1;31mScore: "),
+	write(Score),
+	write("\033[0m"),
 	writeln("\nPara andar digite: \033[1;32mCIMA:W  \033[1;33mBAIXO:S  \033[1;34mDIREITA:D  \033[1;39mESQUERDA:A \033[0m"),
 
 	read_line_to_codes(user_input, Entrada),
     	string_to_atom(Entrada,Entrada_),
-	andaNaMatriz(Entrada_,Maze, ProximoMaze).
+	andaNaMatriz(Entrada_,Maze, ProximoMaze,Score).
 
-andaNaMatriz(help,Maze, Maze):-
-	imprimeMenu.
-
-andaNaMatriz(w,Maze, ProximoMaze):-
+andaNaMatriz(w,Maze, ProximoMaze,Score):-
 	index(Maze,R,C,"@"),
 	Top is (R+14) mod 15,
 	index(Maze,Top,C,Val),
 	 ( \+(Val \== '#') ->
-    	(andaParaPosicao(Maze, Maze,R,C, "nao"));
+    	(andaParaPosicao(Maze, Maze,R,C, "nao",Score));
     ( \+(Val \== 'S') ->(apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),
 		apagaPosicaoEAnda(Top,C, MatUpd, "@", ProximoMaze));
 
@@ -147,12 +146,12 @@ andaNaMatriz(w,Maze, ProximoMaze):-
  	),
 	limpaTela.
 
-andaNaMatriz(s,Maze, ProximoMaze):-
+andaNaMatriz(s,Maze, ProximoMaze,Score):-
 	index(Maze,R,C,"@"),
 	Bot is (R+1) mod 15,
 	index(Maze,Bot,C,Val),
 	 ( \+(Val \== '#') ->
-    	(andaParaPosicao(Maze, Maze,R,C, "nao"));
+    	(andaParaPosicao(Maze, Maze,R,C, "nao",Score));
     ( \+(Val \== 'S') ->     (apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),
 		apagaPosicaoEAnda(Bot,C, MatUpd, "@", ProximoMaze));
 
@@ -162,12 +161,12 @@ andaNaMatriz(s,Maze, ProximoMaze):-
  	),
 	limpaTela.
 
-andaNaMatriz(a,Maze, ProximoMaze):-
+andaNaMatriz(a,Maze, ProximoMaze,Score):-
 	index(Maze,R,C,"@"),
 	Left is (C+14) mod 15,
 	index(Maze,R,Left,Val),
 	 ( \+(Val \== '#') ->
-    	(andaParaPosicao(Maze, Maze,R,C, "nao"));
+    	(andaParaPosicao(Maze, Maze,R,C, "nao",Score));
     ( \+(Val \== 'S') ->   (apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),
 		apagaPosicaoEAnda(R,Left, MatUpd, "@", ProximoMaze));
 
@@ -177,12 +176,12 @@ andaNaMatriz(a,Maze, ProximoMaze):-
  	),
 	limpaTela.
 
-andaNaMatriz(d,Maze, ProximoMaze):-
+andaNaMatriz(d,Maze, ProximoMaze,Score):-
 	index(Maze,R,C,"@"),
 	Right is (C+1) mod 15,
 	index(Maze,R,Right,Val),
 	 ( \+(Val \== '#') ->
-    	(andaParaPosicao(Maze, Maze,R,C, "nao"));
+    	(andaParaPosicao(Maze, Maze,R,C, "nao",Score));
     ( \+(Val \== 'S') -> (apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),
 		apagaPosicaoEAnda(R,Right, MatUpd, "@", ProximoMaze));
 
@@ -191,10 +190,11 @@ andaNaMatriz(d,Maze, ProximoMaze):-
 	)
  	),
 	limpaTela.
+
 % Entrada errada
-andaNaMatriz(_,Maze, ProximoMaze):-
+andaNaMatriz(_,Maze, ProximoMaze,Score):-
 	writeln("Você digitou entrada errada. Digite novamente!"),
-	moveJogador(Maze, ProximoMaze).
+	moveJogador(Maze, ProximoMaze,Score).
 
 
 :- initialization main.
@@ -205,4 +205,4 @@ main:-
 	desenhaLabirinto(Maze),
 	index(Maze,RI,CI,"@"),
 	index(MazeElements,RI,CI,_),
-andaParaPosicao(Maze, MazeElements, RI, CI, "nao").
+	andaParaPosicao(Maze, MazeElements, RI, CI, "nao",0).
