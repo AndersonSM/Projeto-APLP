@@ -73,8 +73,16 @@ criaMatrizComJogador(Maze):-
 
 /* Imprime Menu */
 
-imprimeMenu :- 
+getch(1) :- 
+	limpaTela.
+getch(2) :- 
+	limpaTela,
+	halt(0).
+
+imprimeMenu :-
+	limpaTela,
 	write("-------------------------------------------------"),nl,
+	write("----------------------\033[1;92mMENU\033[0m-----------------------"),nl,
 	write("-------------------------------------------------"),nl,
 	write("----- _       _    _       _       _        -----"),nl,
 	write("-----| | ___ | |_ |_| ___ |_| ___ | |_  ___ -----"),nl,
@@ -86,12 +94,15 @@ imprimeMenu :-
 	write("-------------------------------------------------"),nl,
 	write("-------------------------------------------------"),nl,
 	write("-------------------------------------------------"),nl,
-	writeln("-------------------------------------------------").
+	write("-------------------------------------------------"),nl,
+	write("            "),
+	write("\033[1;36m [1] - JOGAR"),
+	write("\033[0m || [2] - SAIR"),nl,nl,
+	read_line_to_codes(user_input, X1),
+	string_to_atom(X1,X2),
+	atom_number(X2,N),
+	getch(N).
 
-/* Iniciar matriz */
-
-geraMatrizElemento(MazeElements):-
-	matrizVazia(MatrizInicial).
 
 /* Andar */
 
@@ -112,11 +123,11 @@ andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou):-
 
 moveJogador(Maze, ProximoMaze):-
 	writeln(" "),
-	writeln("\n Para andar digite: up: cima, down: baixo, right: direita, left: esquerda. "),
+	writeln("\nPara andar digite: \033[1;32mCIMA:W  \033[1;33mBAIXO:S  \033[1;34mDIREITA:D  \033[1;39mESQUERDA:A \033[0m"),
 
 	read_line_to_codes(user_input, Entrada),
-    string_to_atom(Entrada,Entrada_),
-    andaNaMatriz(Entrada_,Maze, ProximoMaze).
+    	string_to_atom(Entrada,Entrada_),
+	andaNaMatriz(Entrada_,Maze, ProximoMaze).
 
 andaNaMatriz(help,Maze, Maze):-
 	imprimeMenu.
@@ -181,8 +192,8 @@ andaNaMatriz(d,Maze, ProximoMaze):-
  	),
 	limpaTela.
 % Entrada errada
-andaNaMatriz(Entrada,Maze, ProximoMaze):-
-	writeln("Você digitou entrada errada. Digite novamente"),
+andaNaMatriz(_,Maze, ProximoMaze):-
+	writeln("Você digitou entrada errada. Digite novamente!"),
 	moveJogador(Maze, ProximoMaze).
 
 
@@ -193,5 +204,5 @@ main:-
 	criaMatrizComJogador(Maze),
 	desenhaLabirinto(Maze),
 	index(Maze,RI,CI,"@"),
-	index(MazeElements,RI,CI,Val),
+	index(MazeElements,RI,CI,_),
 andaParaPosicao(Maze, MazeElements, RI, CI, "nao").
