@@ -1,6 +1,6 @@
 limpaTela :- write('\e[H\e[2J').
 
-matrizVazia([['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#', '#'], 
+matrizVazia([	['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#', '#'], 
 				['#', '-', '-', '-', '-','-', '-', '-', '-', '#','#', '-', '-', '-', '#'], 
 				['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
 				['#', '-', '-', '-', '-','#', '-', '-', '-', '-','-', '-', '#', '-', '#'],
@@ -15,6 +15,22 @@ matrizVazia([['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#'
 				['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
 				['#', '-', '-', '-', '-','#', '-', '-', '-', '-','-', '-', '#', '-', 'S'],
 				['#', '#', '#', '#', '#','#', '#', '#', '#', '#','#', '#', '#', '#', '#']]).
+
+matrizSegundaFase([ ['#', '-', '#', '#', '#','#', '#', '#', '#', '#','#', '#', '#', '#', '#'], 
+					['#', '-', '-', '-', '-','-', '-', '-', '-', '#','#', '-', '-', '-', '#'], 
+					['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
+					['#', '-', '-', '-', '-','#', '-', '-', '-', '-','-', '-', '#', '-', '#'],
+					['#', '#', '#', '#', '#','#', '#', '#', '#', '#','#', '#', '#', '#', '#'],
+					['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#', '#'], 
+					['#', '-', '-', '-', '-','-', '#', '-', '-', '#','#', '-', '-', '-', '#'], 
+					['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
+					['#', '-', '-', '-', '-','#', '#', '-', '-', '-','-', '-', '#', '-', '#'],
+					['#', '#', '#', '#', '#','#', '-', '#', '#', '#','#', '#', '#', '#', '#'],
+					['#', '-', '#', '#', '#','#', '-', '#', '#', '#','#', '-', '#', '#', '#'], 
+					['#', '-', '-', '-', '-','-', '-', '-', '-', '#','#', '-', '-', '-', '#'], 
+					['#', '-', '-', '-', '#','#', '-', '#', '-', '#','#', '-', '#', '-', '#'],
+					['#', '-', '-', '-', '-','#', '-', '-', '-', '-','-', '-', '#', '-', 'S'],
+					['#', '#', '#', '#', '#','#', '#', '#', '#', '#','#', '#', '#', '#', '#']]).
 
 %imprimir linha
 imprimeLinha([]).
@@ -33,6 +49,7 @@ index(Matrix, Row, Col, Value):-
 
 %Trocar valor da matrz Mat, nas coordenadas (R,C), pelo valor Val
 apagaPosicaoEAnda(R, C, Mat, Val, Upd) :-
+	writeln("APAGANDO"),
     nth0(R, Mat, OldRow, RestRows),   % get the row and the rest
     nth0(C, OldRow, _Val, NewRow),    % we dont care the _Val deleted
     nth0(C, NewRowUpd,Val,NewRow),		% insert Val into C, where _val was
@@ -50,12 +67,14 @@ verificaEAdd(R, C, MatrizAntes, E, MatrizUpd):-
 	(     (Val \= "#"), 
 		apagaPosicaoEAnda(R,C,MatrizAntes,E, MatrizUpd))).
 
-/*================================================== Gera Matriz Jogador ==================================================*/
+/* Gera Matriz Jogador */
+
 criaMatrizComJogador(Maze):-
 	matrizVazia(MatrizInicial),  %pega matriz vazia
 	verificaEAdd(0,1,MatrizInicial,"@", Maze).% coloca o jogador na posicao [0,1]
 
-/*================================================== Imprime Menu ==================================================*/
+/* Imprime Menu */
+
 imprimeMenu :- 
 	write("-------------------------------------------------"),nl,
 	write("-------------------------------------------------"),nl,
@@ -71,15 +90,15 @@ imprimeMenu :-
 	write("-------------------------------------------------"),nl,
 	writeln("-------------------------------------------------").
 
-/*================================================== Iniciar matriz ==================================================*/
-geraMatrizElemento(MazeElements):-
-	matrizVazia(MatrizInicial).  %pega matriz vazia
+/* Iniciar matriz */
 
-/* ================================================== Andar ==================================================*/
+geraMatrizElemento(MazeElements):-
+	matrizVazia(MatrizInicial).
+
+/* Andar */
 
 andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou):-
 	moveJogador(Maze, ProximoMaze),
-	limpaTela,
 	desenhaLabirinto(ProximoMaze),
 	index(ProximoMaze,R,C,"@"),                  % pegar nova Coordenada Jogador
 	index(MazeElements,R,C, Val),				% valor da matriz de elementos.
@@ -87,7 +106,7 @@ andaParaPosicao(Maze, MazeElements, RI, CI, Encontrou):-
 	((Encontrou = "sim", RI=R, CI=C, writeln("Você ganhou!!"));
 
 	((Val = "-"), (andaParaPosicao(ProximoMaze, MazeElements,RI,CI,Encontrou)));
-	((val = "S" ),writeln("\nVocê ganhouuuu !!!!!!"),
+	((Val = "S" ),writeln("\nVocê ganhouuuu2 !!!!!!"),
 		andaParaPosicao(ProximoMaze, MazeElements,RI,CI,"sim"));                    % elseifcaso Val for S ganha
 			
 	(andaParaPosicao(ProximoMaze, MazeElements,RI,CI, Encontrou))). 							% else loop,
@@ -102,6 +121,7 @@ moveJogador(Maze, ProximoMaze):-
 
 andaNaMatriz(help,Maze, Maze):-
 	imprimeMenu.
+
 andaNaMatriz(up,Maze, ProximoMaze):-
 	index(Maze,R,C,"@"),                    			% pegar linha e coluna do Jogador
 	Top is (R+14) mod 15,                              			% proxima pos do jogador
@@ -109,10 +129,31 @@ andaNaMatriz(up,Maze, ProximoMaze):-
 	apagaPosicaoEAnda(Top,C, MatUpd, "@", ProximoMaze).
 
 andaNaMatriz(down,Maze, ProximoMaze):-
-	index(Maze,R,C,"@"),                             % pegar linha e coluna do Jogador
-	Bot is (R+1) mod 15,                                       % proxima pos do jogador
-	apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),         % apagando pos anterior
-	apagaPosicaoEAnda(Bot,C, MatUpd, "@", ProximoMaze).
+	index(Maze,R,C,"@"),
+	Bot is (R+1) mod 15,
+	index(Maze,Bot,C,Val),
+	 ( \+(Val \== '-') ->
+    	(writeln('entrou -'),apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),
+		apagaPosicaoEAnda(Bot,C, MatUpd, "@", ProximoMaze),writeln('PATH END'));
+    ( \+(Val = '#') ->
+        writeln('A is 3');
+    	(writeln('entrou #'),apagaPosicaoEAnda(R,C, Maze, "-", MatUpd),
+		apagaPosicaoEAnda(R,C, MatUpd, "@", ProximoMaze),writeln('PATH END'))
+    	)
+ 	).
+
+
+canWalk("#",Maze,Maze2,R,C).
+		
+canWalk("-",Maze,Maze2,R,C):-
+	apagaPosicaoEAnda(R,C, Maze, "-", Maze2), apagaPosicaoEAnda(Bot,C, Maze, "@", Maze2).
+
+canWalk("S",Maze,Maze2,R,C):-
+	andaParaPosicao(Maze, Maze2,R,C,"nao"). # MUDA DE FASE
+
+canWalk("E",Maze,Maze2,R,C):-
+	andaParaPosicao(Maze, Maze2,R,C,"sim").
+
 
 andaNaMatriz(left,Maze, ProximoMaze):-
 	index(Maze,R,C,"@"),                             % pegar linha e coluna do Jogador
